@@ -1196,6 +1196,9 @@ fn start(project: Option<std::path::PathBuf>, smoke: bool) -> Result<(), slint::
         editor.on_jump(on_lanes!(|state, at: f32| {
             state.jump_to_key(at);
         }));
+        editor.on_set_value(on_lanes!(|state, field: ClipField, value: f32| {
+            state.set_key_value(field, value);
+        }));
         editor.on_move_key(on_lanes!(|state,
                                       field: ClipField,
                                       param: SharedString,
