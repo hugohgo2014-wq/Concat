@@ -453,7 +453,7 @@ export component KeyframesPane inherits Pane {
                                 changed(v) => {
                                     root.active = index;
                                     if (row.param != "") { root.adjust-set(row.param, v); }
-                                    else if (row.state.keyed) { KeyEditor.set-value(row.field, v); }
+                                    else if (row.state.keyed && Keyframes.available) { KeyEditor.set-value(row.field, v); }
                                     else if (row.field == ClipField.volume) { root.clip-set(row.field, InspectorFmt.from-decibels(v)); }
                                     else { root.clip-set(row.field, v); }
                                     root.clip-commit();
