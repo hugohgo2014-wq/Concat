@@ -9689,6 +9689,34 @@ impl Studio {
 
     /// Moves the key at `from` to `to` and gives it `fraction` of its
     /// row's range, keeping its ease: a drag of a handle in the curve view.
+    /// Update the animated value at the playhead, inserting a key when the
+    /// property is already animated. This makes editing a keyed property in
+    /// the Keyframes pane automatically capture the value at the current time.
+    pub fn set_key_value(&mut self, field: ClipField, value: f32) {
+        let Some((clip, at)) = self.key_point() else {
+            return;
+        };
+        let Some(property) = Self::key_property_of(field) else {
+            return;
+        };
+        let clip_id = clip.id.clone();
+        let ease = clip
+            .key_at(property, at)
+            .map(|index| clip.keys[index].ease)
+            .unwrap_or(model::KeyEase::LINEAR);
+        let value = model_value(property, f64::from(value));
+        self.apply_within(
+            "keyframe-value",
+            Command::SetClipKey {
+                clip_id,
+                property,
+                at,
+                value,
+                ease,
+            },
+        );
+    }
+
     pub fn drag_key(&mut self, field: ClipField, param: &str, from: f32, to: f32, fraction: f32) {
         let Some(clip) = self.sole_selection().and_then(|id| self.clip(&id)) else {
             return;
